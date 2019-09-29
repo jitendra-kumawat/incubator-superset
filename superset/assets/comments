@@ -1,1 +1,12 @@
-1. Only displaying one row with 6 images which are the first 6 rows from the csv file
+1. Only displaying one row with 6 images which are the first 6 rows from the csv file, the csv file had 10,000 entries of image urls.
+
+
+2.extra fields are not present, except for 'URL column' and 'caption column' to quey more data, so lets say that the csv file has 4 columns.
+and we have to display extra info about the image, then that is not possible in the current setup.
+
+So possible solution can be to have an option to add more fields in the query section
+
+
+3..Filters are absent to query data. 
+
+So if we have few fields in the dataset which can be used to filter imageURLs.
