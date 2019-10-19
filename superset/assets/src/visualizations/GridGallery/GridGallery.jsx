@@ -29,7 +29,7 @@ const propTypes = {
   allColumnsY: PropTypes.string,
   allColumnsX: PropTypes.string,
   allColumns: PropTypes.arrayOf(PropTypes.string),
-  pageLength:PropTypes.number,
+  pageLength: PropTypes.number,
 };
 const defaultProps = {
   height: undefined,
@@ -38,7 +38,7 @@ const defaultProps = {
   allColumnsY: undefined,
   allColumnsX: undefined,
   allColumns: [],
-  pageLength:25,
+  pageLength: 25,
 };
 
 const captionStyle = {
@@ -83,21 +83,22 @@ class GridGallery extends React.PureComponent {
   setCustomTags(i) {
     return (
       i.tags.map((t) => {
-        return ( <div
+        return (<div
           key={t.value}
           style={customTagStyle}>
           {t.title}:{t.value}
         </div>
-      )}
-    ))
+        )
+      }
+      ))
   }
 
-  handlePageClick (data) {
+  handlePageClick(data) {
     let selected = data.selected;
     this.setState(() => ({ offset: selected }));
   };
 
-  getTags(data){
+  getTags(data) {
     var tags = []
     this.props.allColumns.forEach(col => {
       tags.push({ 'title': col, 'value': data[col] })
@@ -105,9 +106,9 @@ class GridGallery extends React.PureComponent {
     return tags;
   };
 
-  getGridData(offset){
+  getGridData(offset) {
     var dp = [];
-    var start  = offset * this.props.pageLength;
+    var start = offset * this.props.pageLength;
     for (let index = start; index < start + this.props.pageLength; index++) {
       const element = this.props.data[index];
       dp.push(
@@ -124,8 +125,8 @@ class GridGallery extends React.PureComponent {
     return dp;
   }
 
-  getImageData(offset){
-    let images =  this.getGridData(offset)
+  getImageData(offset) {
+    let images = this.getGridData(offset)
     images.map((i) => {
       i.customOverlay = (
         <div style={captionStyle}>
@@ -146,36 +147,41 @@ class GridGallery extends React.PureComponent {
     }
     return false;
   }
-  
+
   render() {
     const pageCount = Math.ceil(this.props.data.length / this.props.pageLength);
     let images = this.getImageData(this.state.offset);
+    const style_1 = { height: '100%', width: '100%', display: 'inline-grid' };
+    const style_2 = { overflow: 'auto', height: this.props.height - 70, width: '100%' };
+    const style = { height: '100%', width: '100%', display: 'inline-table' };
     return (
-      <div style={style} >
+      <div style={style_1}>
+        <div style={style_2}>
+          <div style={style}>
+            <Gallery images={images} enableImageSelection={false} />
+          </div>
+        </div>
         <div>
-        <Gallery images={images} enableImageSelection={false} />
+          <ReactPaginate
+            previousLabel={'previous'}
+            nextLabel={'next'}
+            breakLabel={'...'}
+            pageCount={pageCount}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={5}
+            onPageChange={this.handlePageClick.bind(this)}
+            containerClassName={'pagination'}
+            subContainerClassName={'pages pagination'}
+            activeClassName={'active'}
+            breakClassName={'break-me'}
+          />
         </div>
-        <div style={pageDivStyle}>
-        <ReactPaginate
-          previousLabel={'previous'}
-          nextLabel={'next'}
-          breakLabel={'...'}
-          pageCount={pageCount}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={5}
-          onPageChange={this.handlePageClick.bind(this)}
-          containerClassName={'pagination'}
-          subContainerClassName={'pages pagination'}
-          activeClassName={'active'}
-          breakClassName={'break-me'}
-        />
-        </div>
-      </div>
-    );
+              </div>
+            );
   }
 }
 
 GridGallery.propTypes = propTypes;
 GridGallery.defaultProps = defaultProps;
-
+  
 export default GridGallery;

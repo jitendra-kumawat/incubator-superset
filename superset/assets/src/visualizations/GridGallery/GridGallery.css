@@ -20,6 +20,10 @@
   display: none;
 }
 
+.pagination{
+  margin: 0 !important;
+}
+
 #react-paginate ul {
   display: inline-block;
   padding-left: 15px;
@@ -28,5 +32,10 @@
 
 #react-paginate li {
   display: inline-block;
+}
+
+.grid_gallery
+{
+  height: 100%;
 }
  
