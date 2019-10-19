@@ -19,7 +19,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Gallery from 'react-grid-gallery';
-
+import ReactPaginate from 'react-paginate';
 import './GridGallery.css';
 
 const propTypes = {
@@ -29,6 +29,7 @@ const propTypes = {
   allColumnsY: PropTypes.string,
   allColumnsX: PropTypes.string,
   allColumns: PropTypes.arrayOf(PropTypes.string),
+  pageLength:PropTypes.number,
 };
 const defaultProps = {
   height: undefined,
@@ -37,6 +38,7 @@ const defaultProps = {
   allColumnsY: undefined,
   allColumnsX: undefined,
   allColumns: [],
+  pageLength:25,
 };
 
 const captionStyle = {
@@ -66,8 +68,17 @@ const customTagStyle = {
   margin: '2px',
 };
 
+const style = { overflow: 'auto', height: '100%', width: '100%', display: 'inline-table' };
+const pageDivStyle = { width: '100%', display: 'table-footer-group' };
+
 class GridGallery extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      offset: 0,
+    };
+  }
 
   setCustomTags(i) {
     return (
@@ -81,42 +92,40 @@ class GridGallery extends React.PureComponent {
     ))
   }
 
-  render() {
+  handlePageClick (data) {
+    let selected = data.selected;
+    this.setState(() => ({ offset: selected }));
+  };
 
-    const {
-      height,
-      width,
-      data,
-      allColumnsY,
-      allColumnsX,
-      allColumns,
-    } = this.props;
-    const imagewd = width / 3
-    const style = { overflow: 'auto', height: '100%', width: '100%', display: 'inline-table' };
-    var images = [];
+  getTags(data){
+    var tags = []
+    this.props.allColumns.forEach(col => {
+      tags.push({ 'title': col, 'value': data[col] })
+    });
+    return tags;
+  };
 
-    const getTags = (data) => {
-      var tags = []
-      allColumns.forEach(col => {
-        tags.push({ 'title': col, 'value': data[col] })
-      });
-      return tags;
-    };
-
-
-    data.forEach(element => {
-      images.push(
+  getGridData(offset){
+    var dp = [];
+    var start  = offset * this.props.pageLength;
+    for (let index = start; index < start + this.props.pageLength; index++) {
+      const element = this.props.data[index];
+      dp.push(
         {
-          src: element[allColumnsX],
-          thumbnail: element[allColumnsX],
+          src: element[this.props.allColumnsX],
+          thumbnail: element[this.props.allColumnsX],
           isSelected: false,
-          tags: getTags(element),
-          thumbnailCaption: element[allColumnsY],
+          tags: this.getTags(element),
+          thumbnailCaption: element[this.props.allColumnsY],
         }
       );
+    };
 
-    });
+    return dp;
+  }
 
+  getImageData(offset){
+    let images =  this.getGridData(offset)
     images.map((i) => {
       i.customOverlay = (
         <div style={captionStyle}>
@@ -127,9 +136,40 @@ class GridGallery extends React.PureComponent {
       return i;
     });
 
+    return images;
+
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState.offset != this.state.offset) {
+      return true;
+    }
+    return false;
+  }
+  
+  render() {
+    const pageCount = Math.ceil(this.props.data.length / this.props.pageLength);
+    let images = this.getImageData(this.state.offset);
     return (
       <div style={style} >
+        <div>
         <Gallery images={images} enableImageSelection={false} />
+        </div>
+        <div style={pageDivStyle}>
+        <ReactPaginate
+          previousLabel={'previous'}
+          nextLabel={'next'}
+          breakLabel={'...'}
+          pageCount={pageCount}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={this.handlePageClick.bind(this)}
+          containerClassName={'pagination'}
+          subContainerClassName={'pages pagination'}
+          activeClassName={'active'}
+          breakClassName={'break-me'}
+        />
+        </div>
       </div>
     );
   }

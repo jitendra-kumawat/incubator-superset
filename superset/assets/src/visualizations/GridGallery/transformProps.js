@@ -26,5 +26,7 @@ export default function transformProps(chartProps) {
     allColumnsX: formData.allColumnsX,
     allColumnsY: formData.allColumnsY,
     allColumns: formData.allColumns,
+    pageLength: formData.pageLength,
+
   };
 }

@@ -33,6 +33,14 @@ export default {
         ['adhoc_filters'],
       ],
     },
+    {
+      label: t('Options'),
+      description: t('Use this section for visual properties of components'),
+      expanded: true,
+      controlSetRows: [
+        ['page_length'],
+      ]
+    },
   ],
   controlOverrides: {
     all_columns_x: {
@@ -47,5 +55,8 @@ export default {
       label: 'Extra Data Columns',
       description: t('Columns to display extra info about images on hover'),
     },
+    page_length:{
+      default:10
+    }
   },
 };
